@@ -1,0 +1,2 @@
+1. docker-compose version 1.13 or higher required.
+2. To start, clone the repo and run ```docker-compose up```

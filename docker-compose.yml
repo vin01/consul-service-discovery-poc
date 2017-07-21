@@ -1,0 +1,33 @@
+---
+version: '2'
+services:
+  consulserver:
+    image: consul:0.8.4
+    command: consul agent -dev -client 0.0.0.0
+    ports:
+    - "8500:8500"
+    - "8600:8600/udp"
+    
+  registrator:
+    image: gliderlabs/registrator
+    command: -internal consul://consulserver:8500
+    depends_on:
+    - consulserver
+    volumes:
+    - /var/run/docker.sock:/tmp/docker.sock
+    links:
+    - consulserver
+
+  mongo_db:
+    image: mongo
+    depends_on:
+    - registrator
+
+  app:
+    image: vin01/pyapp
+    depends_on:
+    - mongo_db
+    ports:
+    - "8080:8080"
+    links:
+    - consulserver
